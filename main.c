@@ -6,10 +6,11 @@
 #include <signal.h>
 
 void signal_handler(int sig){
+    write(STDOUT_FILENO, "=> DA BAT DUOC SIGCHLD!\n", 24);
     pid_t repid;
     int status;
     
-    while ((repid = waitpid(-1,NULL,WNOHANG)) < 0){
+    while ((repid = waitpid(-1,NULL,WNOHANG)) > 0){
         char *msg_clear = "Clear service success, rester service...\n";
         write(STDOUT_FILENO, msg_clear, strlen(msg_clear));
 
@@ -47,16 +48,15 @@ int main(){
     if((pid = fork()) < 0){
         printf("Fork Failed");
         exit(1);
-    }
-    if (pid > 0) {
-    printf("[SecWatch] Dịch vụ con đang chạy với PID: %d\n", pid);
-    }
-    if((pid == 0)){
-        if(execlp("sleep","sleep","10", NULL) == -1){
+    } else if((pid == 0)){
+        if(execlp("sleep","sleep","300", NULL) == -1){
             perror("Services was running wrong");
             exit(1);
         }
+    }else {
+        printf("[secwatch] dịch vụ con đang chạy với pid: %d\n", pid);
     } 
+
     while(1){
         pause();
     }
