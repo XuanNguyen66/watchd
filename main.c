@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <errno.h>
 
 volatile sig_atomic_t shutting_down = 0;
 pid_t child_pid = -1;
@@ -12,7 +13,7 @@ void sigchld_handler(int sig){
     if (shutting_down) {
         return; 
     }
-
+    int  olderrno =  errno;
     pid_t repid;
     int status;
    
@@ -41,13 +42,13 @@ void sigchld_handler(int sig){
         }
 
     }
-    
     }
+    errno = olderrno;
 }
 
 void sigint_handler(int sig){
     shutting_down = 1;
-
+    int olderrno = errno;
     char *msg = "\n[SecWatch] Nhan lenh tat. Dang gui SIGTERM...\n";
     write(STDOUT_FILENO, msg, strlen(msg));
     
@@ -57,10 +58,36 @@ void sigint_handler(int sig){
     while (waitpid(-1,NULL, 0) > 0);
     char *msg_clear = "[SecWatch] Da don dep sach he thong. Goodbye!\n";
     write(STDOUT_FILENO, msg_clear, strlen(msg_clear));
+    errno = olderrno;
     _exit(0);
 }
 
+void become_daemon(){
+    pid_t pid;
+    
+    pid = fork();
+
+    if(pid < 0) exit(1);
+    if(pid > 0){
+        printf("Parent có child là: %d\n", pid);
+        exit(0);
+    }
+    
+    // child use setsid = session leader
+    if(setsid() < 0) exit(1);
+
+    pid = fork();
+    if (pid < 0) exit(1);
+    // kill child
+    if (pid > 0) {
+        printf("Child có childhood là: %d\n", pid);
+        exit(0);
+    }
+}
+
 int main(){
+    become_daemon();
+
     pid_t pid;
     int status;
     struct sigaction sa_chld, sa_int;
@@ -94,7 +121,6 @@ int main(){
             printf("Fork Failed");
             exit(1);
      } else if((pid == 0)){
-          child_pid = pid;
           sigprocmask(SIG_UNBLOCK,&mask, NULL);
           
           if(execlp("sleep","sleep","300", NULL) == -1){
@@ -102,8 +128,9 @@ int main(){
                exit(1);
           }
       }else {
-          printf("[secwatch] dịch vụ con đang chạy với pid: %d\n", pid);
-  
+          child_pid = pid;
+          printf("\n[secwatch] dịch vụ con đang chạy với pid: %d\n", pid);
+      } 
    sigprocmask(SIG_SETMASK, &prev_mask, NULL);
 
     while(1){
@@ -113,4 +140,4 @@ int main(){
     return 0;
 
 }
-}
+
