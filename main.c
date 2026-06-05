@@ -5,6 +5,7 @@
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
+#include <fcntl.h>
 
 volatile sig_atomic_t shutting_down = 0;
 pid_t child_pid = -1;
@@ -83,7 +84,24 @@ void become_daemon(){
         printf("Child có childhood là: %d\n", pid);
         exit(0);
     }
+
+    int fd = open("/var/log/secwatch.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
+
+    if(fd != -1){
+        dup2(fd, 1);
+        dup2(fd, 2);
+        close(fd);
+        
+        // off buffer -> write real-time
+        setvbuf(stdout, NULL, _IONBF, 0);
+        setvbuf(stderr, NULL, _IONBF, 0);
+    }else{
+        perror("Không thể mở file log secwatch.log");
+    }
+
 }
+
+
 
 int main(){
     become_daemon();
