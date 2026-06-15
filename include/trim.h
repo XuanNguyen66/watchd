@@ -1,6 +1,6 @@
-#ifndef TRIM.H
-#define TRIM.H
+#ifndef TRIM_H
+#define TRIM_H
 
-void trimline(*str);
+void trimline(char *str);
 
 #endif

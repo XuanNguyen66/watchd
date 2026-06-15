@@ -2,29 +2,38 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "trim.h"
+#include "parseline.h"
 
 void parseline(char *line){
-    char *token = strtok(line, "=\n");
-    while(token != NULL){
-        printf("Token: %s\n", token);
-        token = strtok(NULL, "=\n");
+    char *ptr = strchr(line, '=');
+  
+    if(ptr != NULL){
+        *ptr = '\0';
+        char *key = line;
+        char *value = ptr + 1;
+        trimline(key);
+        trimline(value);
+        printf("%s\n", key);
+        printf("%s\n", value);
     }
 }
     
-int main(){
-   FILE *fd = fopen("../secwatch.conf", "r");
+//int main(){
+//   FILE *fd = fopen("secwatch.conf", "r");
 
-   if(fd == NULL){
-        printf("Erro");
-        return 0;
-   }
+//   if(fd == NULL){
+//        printf("--------------\n");
+//        printf("Erro\n");
+//        return 0;
+//   }
+//
+//   char line[256];
+//   while(fgets(line, sizeof(line),fd) != NULL){
+//        printf("%s", line);
+//        parseline(line);
+//   }
+//   fclose(fd);
 
-   char line[10];
-   while(fgets(line, sizeof(line),fd) != NULL){
-   //     printf("%s", line);
-        parseline(line);
-   }
-   fclose(fd);
-
-   return 0;
-}
+//   return 0;
+//}

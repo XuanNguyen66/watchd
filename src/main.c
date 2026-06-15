@@ -6,6 +6,14 @@
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <parseline.h>
+
+
+typedef struct{
+    pid_t pid;
+    unsigned int restarCount;
+    char nameService[100];
+} ServerConfig;
 
 volatile sig_atomic_t shutting_down = 0;
 pid_t child_pid = -1;
@@ -105,16 +113,16 @@ void become_daemon(){
 
 int main(){
 
-    FILE *fd = fopen("../secwatch.conf", "r");
+    FILE *fd = fopen("secwatch.conf", "r");
 
-    char line[20];
+    char line[256];
 
     if(fd == NULL){
         printf("Open file error\n");
         return 1;
     }
     while(fgets(line, sizeof(line), fd) != NULL){
-        printf("%s", line);
+        parseline(line);
     }
     fclose(fd);
 
