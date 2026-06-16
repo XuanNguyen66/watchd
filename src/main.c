@@ -109,6 +109,10 @@ void become_daemon(){
 
 }
 
+void load_config(ServerConfig *manage){
+    
+}
+
 
 
 int main(){
