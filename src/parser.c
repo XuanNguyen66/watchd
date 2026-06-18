@@ -5,9 +5,12 @@
 #include "trim.h"
 #include "parseline.h"
 
-void parseline(char *line){
+void parseline(char *line, SecWatchManager *manage){
+    
     char *ptr = strchr(line, '=');
-  
+    
+    int idx = 0;
+
     if(ptr != NULL){
         *ptr = '\0';
         char *key = line;
@@ -16,24 +19,18 @@ void parseline(char *line){
         trimline(value);
         printf("%s\n", key);
         printf("%s\n", value);
+
+        if(strcmp(key, "name") == 0){
+            idx = manage->total_services;
+            strcpy(manage->services[idx].name, value);
+        }
+
+
+        if(strcmp(key, "cmd") == 0){
+           idx = manage->total_services;
+
+           strcpy(manage->services[idx].cmd,value);
+           manage->total_services++;
+        }
     }
 }
-    
-//int main(){
-//   FILE *fd = fopen("secwatch.conf", "r");
-
-//   if(fd == NULL){
-//        printf("--------------\n");
-//        printf("Erro\n");
-//        return 0;
-//   }
-//
-//   char line[256];
-//   while(fgets(line, sizeof(line),fd) != NULL){
-//        printf("%s", line);
-//        parseline(line);
-//   }
-//   fclose(fd);
-
-//   return 0;
-//}

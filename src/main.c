@@ -9,12 +9,6 @@
 #include <parseline.h>
 
 
-typedef struct{
-    pid_t pid;
-    unsigned int restarCount;
-    char nameService[100];
-} ServerConfig;
-
 volatile sig_atomic_t shutting_down = 0;
 pid_t child_pid = -1;
 
@@ -109,13 +103,9 @@ void become_daemon(){
 
 }
 
-void load_config(ServerConfig *manage){
-    
-}
-
-
-
 int main(){
+    SecWatchManager manage;
+    manage.total_services = 0;
 
     FILE *fd = fopen("secwatch.conf", "r");
 
@@ -126,14 +116,20 @@ int main(){
         return 1;
     }
     while(fgets(line, sizeof(line), fd) != NULL){
-        parseline(line);
+        parseline(line, &manage);
     }
     fclose(fd);
 
+    printf("Dịch vụ đầu tiên là: %s\n có cmdline là: %s\n", manage.services[0].name, manage.services[0].cmd);
+   
+    printf("Dịch vụ thứ hai là: %s\n có cmdline là: %s\n", manage.services[1].name, manage.services[1].cmd);
+    //printf("Dịch vụ thứ 2 là: %s\n", my_manager.services[0].cmd);
     //become_daemon();
 
     pid_t pid;
     int status;
+    int i;
+
     struct sigaction sa_chld, sa_int;
 
     sa_int.sa_handler = sigint_handler;
@@ -161,20 +157,28 @@ int main(){
     sigaddset(&mask, SIGCHLD);
 
     sigprocmask(SIG_BLOCK, &mask, &prev_mask); 
+    
+    for(i = 0; i < manage.total_services; i++){
         if((pid = fork()) < 0){
             printf("Fork Failed");
             exit(1);
-     } else if((pid == 0)){
+        }else if((pid == 0)){
           sigprocmask(SIG_UNBLOCK,&mask, NULL);
           
-          if(execlp("sleep","sleep","300", NULL) == -1){
+          char *args[] = {manage.services[i].cmd, NULL};
+
+          if(execvp(args[0],args)== -1){
                perror("Services was running wrong");
                exit(1);
-          }
-      }else {
-          child_pid = pid;
-          printf("\n[secwatch] dịch vụ con đang chạy với pid: %d\n", pid);
-      } 
+        }
+        }else {
+          manage.services[i].pid = pid;
+          //printf("\n[secwatch] dịch vụ con đang chạy với pid: %d\n", pid);
+          printf("\n[secwatch] dich vu %s dang chay voi pid: %d\n",
+               manage.services[i].name, pid);
+          printf("có cmdline là: \"%s\"\n", manage.services[i].cmd);
+      }
+    }   
    sigprocmask(SIG_SETMASK, &prev_mask, NULL);
 
     while(1){
