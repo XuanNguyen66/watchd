@@ -147,10 +147,10 @@ int main(){
     sigemptyset(&sa_chld.sa_mask);
     sa_chld.sa_flags = SA_RESTART;
 
-    if(sigaction(SIGCHLD, &sa_chld,NULL) == -1){
-          perror("signal error");
-          exit(1);
-    }
+    //if(sigaction(SIGCHLD, &sa_chld,NULL) == -1){
+    //      perror("signal error");
+    //      exit(1);
+    //}
 
     sigset_t mask, prev_mask;
     sigemptyset(&mask);
@@ -165,9 +165,18 @@ int main(){
         }else if((pid == 0)){
           sigprocmask(SIG_UNBLOCK,&mask, NULL);
           
-          char *args[] = {manage.services[i].cmd, NULL};
+          char *custom_argv[10];
+          int arg_idx = 0;   
+          char cmd_tmp[256];
+          strcpy(cmd_tmp, manage.services[i].cmd); 
 
-          if(execvp(args[0],args)== -1){
+          char *token = strtok(cmd_tmp, " ");
+          while (token != NULL && arg_idx < 9) {
+              custom_argv[arg_idx++] = token;
+              token = strtok(NULL, " ");
+          }
+          custom_argv[arg_idx] = NULL;
+          if(execvp(custom_argv[0], custom_argv)== -1){
                perror("Services was running wrong");
                exit(1);
         }
@@ -186,6 +195,5 @@ int main(){
     }
        
     return 0;
-
 }
 

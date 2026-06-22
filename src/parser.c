@@ -25,7 +25,6 @@ void parseline(char *line, SecWatchManager *manage){
             strcpy(manage->services[idx].name, value);
         }
 
-
         if(strcmp(key, "cmd") == 0){
            idx = manage->total_services;
 
@@ -33,4 +32,5 @@ void parseline(char *line, SecWatchManager *manage){
            manage->total_services++;
         }
     }
+
 }
