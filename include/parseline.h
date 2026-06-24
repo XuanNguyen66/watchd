@@ -1,6 +1,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 
+#define MAX_SERVICE 1
 
 typedef struct {
     pid_t pid;
@@ -9,7 +10,7 @@ typedef struct {
 } ServiceConfig;
 
 typedef struct {
-    ServiceConfig services[10];
+    ServiceConfig services[MAX_SERVICE];
     int total_services;
 } SecWatchManager;
 
