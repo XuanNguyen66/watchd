@@ -7,9 +7,11 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <parseline.h>
+#include <become_daemon.h>
 
 
 int main(){
+    become_
     SecWatchManager manage;
     manage.total_services = 0;
 

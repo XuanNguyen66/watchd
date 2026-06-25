@@ -2,11 +2,13 @@
 #define PARSE_H
 
 #define MAX_SERVICE 10
+#define MAX_ARGV 20
 
 typedef struct {
     pid_t pid;
     char name[64];
     char cmd[256];
+    char *argv[MAX_ARGV];
 } ServiceConfig;
 
 typedef struct {

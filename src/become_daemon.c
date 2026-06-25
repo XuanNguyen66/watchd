@@ -61,4 +61,5 @@ int become_daemon(int flags){
         }
         
     }
+    return 0;
 }
