@@ -22,7 +22,6 @@ int main(){
         return 1;
     }
     while(fgets(line, sizeof(line), fd) != NULL){
-       //printf("Thông tin của file là %s\n", line);
        parseline(line, &manage);
     }
    printf("Số lượng dịch vụ đã parse: %d\n", manage.total_services);

@@ -1,7 +1,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-#define MAX_SERVICE 1
+#define MAX_SERVICE 10
 
 typedef struct {
     pid_t pid;
