@@ -18,5 +18,6 @@ typedef struct {
 
 
 void parseline(char *line, SecWatchManager *manage);
+void start_services(SecWatchManager *manage);
 
 #endif

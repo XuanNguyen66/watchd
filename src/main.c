@@ -11,7 +11,6 @@
 
 
 int main(){
-    become_
     SecWatchManager manage;
     manage.total_services = 0;
 
@@ -26,11 +25,14 @@ int main(){
     while(fgets(line, sizeof(line), fd) != NULL){
        parseline(line, &manage);
     }
-   printf("Số lượng dịch vụ đã parse: %d\n", manage.total_services);
+    start_services(&manage);
+
+    printf("Số lượng dịch vụ đã parse: %d\n", manage.total_services);
     for (int i = 0; i < manage.total_services; i++) {
         printf("Dịch vụ %d: %s | Lệnh: %s\n", 
                i + 1, manage.services[i].name, manage.services[i].cmd);
     }
+
     return 0;
 }
 
