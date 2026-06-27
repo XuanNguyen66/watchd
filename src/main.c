@@ -26,6 +26,10 @@ int main(){
        parseline(line, &manage);
     }
     start_services(&manage);
+    
+    while(1){
+        waitpid(-1, NULL, 0);
+    }
 
     printf("Số lượng dịch vụ đã parse: %d\n", manage.total_services);
     for (int i = 0; i < manage.total_services; i++) {
