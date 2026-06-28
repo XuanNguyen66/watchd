@@ -5,7 +5,6 @@
 #include "parseline.h"
 
 void start_services(SecWatchManager *manage){
-    printf("Hello - i start services\n");
     pid_t pid;
     int i;
     for(i = 0; i < manage->total_services; i++){
