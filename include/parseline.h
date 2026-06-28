@@ -11,8 +11,14 @@ typedef struct {
     char *argv[MAX_ARGV];
 } ServiceConfig;
 
+typedef enum {
+    SERVICE_RUNNING,
+    SERVICE_STOPPED,
+} ServiceState;
+
 typedef struct {
     ServiceConfig services[MAX_SERVICE];
+    ServiceState state;
     int total_services;
 } SecWatchManager;
 
