@@ -1,13 +1,5 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <parseline.h>
-#include <become_daemon.h>
+#include "parseline.h"
+#include "become_daemon.h"
 
 
 int main(){
@@ -26,6 +18,8 @@ int main(){
        parseline(line, &manage);
     }
     start_services(&manage);
+
+    check_service(&manage);
     
     while(1){
         waitpid(-1, NULL, 0);
