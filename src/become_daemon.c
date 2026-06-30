@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <become_daemon.h>
+#include "become_daemon.h"
 
 int become_daemon(int flags){
     int max_fd, fd;
