@@ -18,11 +18,11 @@ int main(){
        parseline(line, &manage);
     }
     start_services(&manage);
-
-    check_service(&manage);
     
     while(1){
-        waitpid(-1, NULL, 0);
+        while (waitpid(-1, NULL, WNOHANG) > 0);
+        check_service(&manage);
+        sleep(5);
     }
 
     printf("Số lượng dịch vụ đã parse: %d\n", manage.total_services);

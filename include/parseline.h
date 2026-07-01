@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 #define MAX_SERVICE 10
 #define MAX_ARGV 20
