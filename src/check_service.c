@@ -18,10 +18,10 @@ void check_service(SecWatchManager *manage){
 
     switch(manage->state){
         case SERVICE_RUNNING:
-            printf("Đây là services running");
+            printf("Đây là services running\n");
             break;
         case SERVICE_STOPPED:
-            printf("service tèo rồi");
+            printf("service tèo rồi\n");
             break;
     }
 }
