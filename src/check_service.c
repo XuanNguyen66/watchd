@@ -1,17 +1,15 @@
 #include "parseline.h"
 
-// bool is_process_alive(){
-//     if (kill(, 0) == 0)
-//     {
-//         return 0;
-//     }
-//     if(kill(-pid,0) )
-    
-//     return 1;
-// }
+static bool is_process_alive(SecWatchManager *manage){
+    if (manage->services->pid > 0 && kill(manage->services->pid, 0) == 0)
+    {
+        return true;
+    } 
+    return false;
+}
 
 void check_service(SecWatchManager *manage){
-    if(manage->services->pid){
+    if(is_process_alive(manage)){
         manage->state = SERVICE_RUNNING;
     }
     else{
@@ -20,10 +18,10 @@ void check_service(SecWatchManager *manage){
 
     switch(manage->state){
         case SERVICE_RUNNING:
-            printf("Đây là services running");
+            printf("Đây là services running\n");
             break;
         case SERVICE_STOPPED:
+            printf("service tèo rồi\n");
             break;
     }
-
 }
