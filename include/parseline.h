@@ -10,20 +10,28 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define MAX_SERVICE 10
 #define MAX_ARGV 20
+#define MAX_LIMIT 5
 
 typedef struct {
     pid_t pid;
     char name[64];
     char cmd[256];
     char *argv[MAX_ARGV];
+
+    int restart_limit[MAX_LIMIT];
+    unsigned int restart_count;
+    time_t restart_time;
+    time_t service_recover;
+    
 } ServiceConfig;
 
 typedef enum {
-    SERVICE_RUNNING,
-    SERVICE_STOPPED,
+    SERVICE_RUNNING = 1,
+    SERVICE_STOPPED = 2,
 } ServiceState;
 
 typedef struct {
@@ -35,6 +43,7 @@ typedef struct {
 
 void parseline(char *line, SecWatchManager *manage);
 void start_services(SecWatchManager *manage);
-void check_service(SecWatchManager *manage);
+int check_service(SecWatchManager *manage);
+void monitor_service(SecWatchManager *manage);
 
 #endif

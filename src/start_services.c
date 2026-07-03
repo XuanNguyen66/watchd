@@ -12,7 +12,6 @@ void start_services(SecWatchManager *manage){
         }   
 
         if(pid == 0){
-            printf("Cmdline %s\n", manage->services[i].argv[0]);
             if(execvp(manage->services[i].argv[0], manage->services[i].argv) == -1){
                 perror("execvp failed");
                 exit(1);

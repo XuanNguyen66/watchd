@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Iinclude
+CFLAGS := -g -Wall -Iinclude
 LDFLAGS :=
 
 SRCDIR := src

@@ -22,6 +22,7 @@ int main(){
     while(1){
         while (waitpid(-1, NULL, WNOHANG) > 0);
         check_service(&manage);
+        monitor_service(&manage);
         sleep(5);
     }
 
