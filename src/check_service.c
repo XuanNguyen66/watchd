@@ -2,6 +2,7 @@
 
 
 void restart_service(SecWatchManager *manage);
+void check_time(SecWatchManager *manage);
 
 static bool is_process_alive(SecWatchManager *manage){
     if (manage->services->pid > 0 && kill(manage->services->pid, 0) == 0)
@@ -12,14 +13,24 @@ static bool is_process_alive(SecWatchManager *manage){
 }
 
 int check_service(SecWatchManager *manage){
-    if(is_process_alive(manage)){
-        manage->state = SERVICE_RUNNING;
-    }
-    else{
-        manage->state = SERVICE_STOPPED;
+
+    bool alive = is_process_alive(manage);
+    if(manage->state != SERVICE_STARTING){
+        if(alive){
+            manage->state = SERVICE_RUNNING;
+        }
+        else{
+            manage->state = SERVICE_STOPPED;
+        }
+    } else{
+        if (!alive) {
+            manage->state = SERVICE_STOPPED;
+        }
     }
 
     switch(manage->state){
+        case SERVICE_STARTING:
+            break;
         case SERVICE_RUNNING:
             printf("Đây là services running\n");
             break;
@@ -32,12 +43,15 @@ int check_service(SecWatchManager *manage){
 
 
 void monitor_service(SecWatchManager *manage){
-    if(check_service(manage) == SERVICE_STOPPED){
-       restart_service(manage);
+    check_time(manage);
+    int current_state = check_service(manage);
+    
+    if (current_state == SERVICE_STOPPED) {
+        restart_service(manage);
     }
 }
 
-void restart_service(SecWatchManager *manage){
+void restart_service(SecWatchManager *manage){    
     pid_t new_pid = fork();
 
     if (new_pid < 0) {
@@ -53,6 +67,24 @@ void restart_service(SecWatchManager *manage){
         }
     } else {
         manage->services->pid = new_pid;
-        manage->state = SERVICE_RUNNING;
+        manage->state = SERVICE_STARTING;
+
+        // update time service restart
+        manage->services->restart_time = time(NULL);
+
     }
+}
+
+void check_time(SecWatchManager *manage){
+    time_t now = time(NULL);
+    if(manage->state == SERVICE_STARTING){
+        double uptime = difftime( now, manage->services->restart_time);
+        if(uptime >= 60.0){
+            manage->state = SERVICE_RUNNING;
+            printf("Service đã chạy ổn định\n");
+        } else{
+            printf("Service chưa chạy ổn định\n");
+        }
+    }
+
 }

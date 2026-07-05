@@ -22,8 +22,6 @@ void parseline(char *line, SecWatchManager *manage){
         char *value = delimiter + 1; 
         trimline(key);
         trimline(value);
-        printf("%s\n", key);
-        printf("%s\n", value);
         int idx = manage->total_services - 1;
         if(strcmp(key,"name") == 0){
             strcpy(manage->services[idx].name, value);
