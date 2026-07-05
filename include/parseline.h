@@ -14,7 +14,7 @@
 
 #define MAX_SERVICE 10
 #define MAX_ARGV 20
-#define MAX_LIMIT 5
+#define MAX_LIMIT 3
 
 typedef struct {
     pid_t pid;
@@ -33,6 +33,7 @@ typedef enum {
     SERVICE_STARTING = 0,
     SERVICE_RUNNING = 1,
     SERVICE_STOPPED = 2,
+    SERVICE_FAILED = 3,
 } ServiceState;
 
 typedef struct {
