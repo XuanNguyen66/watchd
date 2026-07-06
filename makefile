@@ -7,7 +7,7 @@ OBJDIR := src
 BUILDDIR := build
 BINDIR := bin
 
-FILES := main parser trim start_services check_service become_daemon
+FILES := main parser trim start_services check_service become_daemon handler_failed
 OBJFILES := $(addprefix $(BUILDDIR)/, $(FILES:=.o))
 
 TARGET := $(BINDIR)/main

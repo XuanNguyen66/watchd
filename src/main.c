@@ -23,7 +23,6 @@ int main(){
     start_services(&manage);
     
     while(1){
-        while (waitpid(-1, NULL, WNOHANG) > 0);
         check_service(&manage);
         monitor_service(&manage);
         sleep(5);

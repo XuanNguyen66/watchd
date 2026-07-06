@@ -45,7 +45,7 @@ int become_daemon(int flags){
     if(!(flags & BD_NO_REOPEN_STD_FDS)){
         close(STDIN_FILENO);
         // fd = open("/dev/null", O_RDWR);
-        fd = open("../logs/logs.log", O_RDWR | O_CREAT | O_APPEND, 0600);
+        fd = open("../logs/log_services.log", O_RDWR | O_APPEND, 0600);
         if(fd != STDIN_FILENO){
             return -1;
         }

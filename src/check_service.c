@@ -5,6 +5,8 @@ void restart_service(SecWatchManager *manage);
 static void check_time(SecWatchManager *manage);
 
 static bool is_process_alive(SecWatchManager *manage){
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+
     if (manage->services->pid > 0 && kill(manage->services->pid, 0) == 0)
     {
         return true;
@@ -14,8 +16,8 @@ static bool is_process_alive(SecWatchManager *manage){
 
 int check_service(SecWatchManager *manage){
 
-    if (manage->state == SERVICE_FAILED) {
-        return SERVICE_FAILED;
+    if (manage->state == SERVICE_FAILED){
+        write_logging(manage);        
     }
 
     bool alive = is_process_alive(manage);
