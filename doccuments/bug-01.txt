@@ -1,5 +1,0 @@
-Khi start service lúc start thành công, lúc không -> child chết -> dẫn đến parent die
-Tái hiện lỗi
-1. start binary
-2. daemon start không thành công
-3. process die
