@@ -17,7 +17,7 @@ static bool is_process_alive(SecWatchManager *manage){
 int check_service(SecWatchManager *manage){
 
     if (manage->state == SERVICE_FAILED){
-        write_logging(manage);        
+        write_failed(manage);        
     }
 
     bool alive = is_process_alive(manage);

@@ -1,0 +1,5 @@
+State = FAILED
+Không write logging được vào log failed
+==> Do do không dẫn đúng path
+
+-> check xem có path/dir/file tồn tại chưa
