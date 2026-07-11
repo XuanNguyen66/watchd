@@ -12,7 +12,7 @@ int main(){
     SecWatchManager manage;
     manage.total_services = 0;
 
-    FILE *fd = fopen("secwatch.conf", "r");
+    FILE *fd = fopen("watch.conf", "r");
 
     char line[256];
 

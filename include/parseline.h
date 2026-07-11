@@ -47,6 +47,6 @@ void parseline(char *line, SecWatchManager *manage);
 void start_services(SecWatchManager *manage);
 int check_service(SecWatchManager *manage);
 void monitor_service(SecWatchManager *manage);
-void write_failed(SecWatchManager *manage);
+void write_logging(SecWatchManager *manage);
 
 #endif
