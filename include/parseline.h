@@ -30,10 +30,10 @@ typedef struct {
 } ServiceConfig;
 
 typedef enum {
-    SERVICE_STARTING = 0,
-    SERVICE_RUNNING = 1,
-    SERVICE_STOPPED = 2,
-    SERVICE_FAILED = 3,
+    SERVICE_STARTING,
+    SERVICE_RUNNING,
+    SERVICE_STOPPED,
+    SERVICE_FAILED,
 } ServiceState;
 
 typedef struct {

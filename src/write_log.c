@@ -1,5 +1,12 @@
 #include "parseline.h"
 
+const char *state_name[] = {
+    "STARTING",
+    "RUNNING",
+    "STOPPED",
+    "FAILED"
+};
+
 void write_logging(SecWatchManager *manage){
     fprintf(stderr, "write_failed called\n");
     
@@ -21,6 +28,8 @@ void write_logging(SecWatchManager *manage){
             exit(EXIT_FAILURE);
         }
         dprintf(service_runningfd, "Service: [%s]\nTime: [%s]\n", manage->services->name, buf);
+        dprintf(service_runningfd, "Pid: [%d]\n", manage->services->pid);
+        dprintf(service_runningfd, "State: [%s]\n", state_name[manage->state]);
         close(service_runningfd);
     }
 
@@ -30,6 +39,8 @@ void write_logging(SecWatchManager *manage){
             exit(EXIT_FAILURE);
         }
         dprintf(service_failedfd, "Service: [%s]\nTime: [%s]\n", manage->services->name, buf);
+        dprintf(service_failedfd, "Pid: [%d]\n", manage->services->pid);
+        dprintf(service_failedfd, "State: [%s]\n", state_name[manage->state]);
         close(service_failedfd);
     }
 }
