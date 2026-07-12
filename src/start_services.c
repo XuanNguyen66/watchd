@@ -19,7 +19,11 @@ void start_services(SecWatchManager *manage){
         }
         if(pid > 0){
             manage->services[i].pid = pid;
-            printf("Tôi đang quản lý các services là: %s\n", manage->services[i].name);
+            manage->state = SERVICE_STARTING;
+
+            manage->services->restart_time = time(NULL);
+
+            check_service(manage);
         }
     }
 

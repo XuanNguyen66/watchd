@@ -48,5 +48,6 @@ void start_services(SecWatchManager *manage);
 int check_service(SecWatchManager *manage);
 void monitor_service(SecWatchManager *manage);
 void write_logging(SecWatchManager *manage);
+void check_time(SecWatchManager *manage);
 
 #endif

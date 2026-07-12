@@ -2,7 +2,7 @@
 
 
 void restart_service(SecWatchManager *manage);
-static void check_time(SecWatchManager *manage);
+void check_time(SecWatchManager *manage);
 
 static bool is_process_alive(SecWatchManager *manage){
     while (waitpid(-1, NULL, WNOHANG) > 0);
@@ -33,20 +33,6 @@ int check_service(SecWatchManager *manage){
         if (!alive) {
             manage->state = SERVICE_STOPPED;
         }
-    }
-
-    switch(manage->state){
-        case SERVICE_STARTING:
-            break;
-        case SERVICE_RUNNING:
-            printf("Đây là services running\n");
-            break;
-        case SERVICE_STOPPED:
-            printf("service tèo rồi\n");
-            break;
-        case SERVICE_FAILED:
-            printf("CRITICAL: Service hỏng nặng, dừng thử lại!\n"); 
-            break;
     }
     return manage->state;
 }
@@ -93,7 +79,7 @@ void restart_service(SecWatchManager *manage){
     }
 }
 
-static void check_time(SecWatchManager *manage){
+void check_time(SecWatchManager *manage){
     time_t now = time(NULL);
     if(manage->state == SERVICE_STARTING){
         double uptime = difftime( now, manage->services->restart_time);
