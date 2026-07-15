@@ -21,9 +21,9 @@ void start_services(SecWatchManager *manage){
             manage->services[i].pid = pid;
             manage->state = SERVICE_STARTING;
 
-            manage->services->restart_time = time(NULL);
+            manage->services[i].restart_time = time(NULL);
 
-            check_service(manage);
+            check_time(manage);
         }
     }
 

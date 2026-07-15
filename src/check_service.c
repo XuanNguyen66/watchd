@@ -41,7 +41,6 @@ int check_service(SecWatchManager *manage){
 void monitor_service(SecWatchManager *manage){
     check_time(manage);
     int current_state = check_service(manage);
-    
     if (current_state == SERVICE_STOPPED) {
         restart_service(manage);
     }
@@ -86,9 +85,7 @@ void check_time(SecWatchManager *manage){
         if(uptime >= 60.0){
             manage->state = SERVICE_RUNNING;
             manage->services->restart_count = 0;
-            printf("Service đã chạy ổn định\n");
-        } else{
-            printf("Service chưa chạy ổn định\n");
+            write_pid_file(manage);
         }
     }
 

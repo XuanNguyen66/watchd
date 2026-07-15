@@ -7,6 +7,23 @@ const char *state_name[] = {
     "FAILED"
 };
 
+void write_pid_file(SecWatchManager *manage){
+    if(access("./config", F_OK) != 0){
+        perror("Check dir");
+        exit(EXIT_FAILURE);
+    }
+
+    if(manage->state == SERVICE_RUNNING){
+        int write_pid = open("./config/daemon_pid.txt", O_RDWR| O_CREAT | O_TRUNC, 0600);
+        if(write_pid == -1){
+            exit(EXIT_FAILURE);
+        }
+        dprintf(write_pid, "Service: [%s]\n", manage->services->name);
+        dprintf(write_pid, "Pid: [%d]\n", manage->services->pid);
+        close(write_pid);
+    } 
+}
+
 void write_logging(SecWatchManager *manage){
     fprintf(stderr, "write_failed called\n");
     

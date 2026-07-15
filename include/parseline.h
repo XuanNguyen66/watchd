@@ -14,7 +14,7 @@
 
 #define MAX_SERVICE 10
 #define MAX_ARGV 20
-#define MAX_LIMIT 1
+#define MAX_LIMIT 0
 
 typedef struct {
     pid_t pid;
@@ -49,5 +49,6 @@ int check_service(SecWatchManager *manage);
 void monitor_service(SecWatchManager *manage);
 void write_logging(SecWatchManager *manage);
 void check_time(SecWatchManager *manage);
+void write_pid_file(SecWatchManager *manage);
 
 #endif
