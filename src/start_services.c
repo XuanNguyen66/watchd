@@ -4,6 +4,8 @@ void start_services(SecWatchManager *manage){
     pid_t pid;
     int i;
     for(i = 0; i < manage->total_services; i++){
+        ServiceConfig *s = &manage->services[i];
+
         pid = fork();
 
         if(pid < 0){
@@ -18,12 +20,11 @@ void start_services(SecWatchManager *manage){
             }
         }
         if(pid > 0){
-            manage->services[i].pid = pid;
-            manage->state = SERVICE_STARTING;
-
-            manage->services[i].restart_time = time(NULL);
-
-            check_time(manage);
+            
+            s->pid = pid;
+            s->state = SERVICE_STARTING;
+            s->restart_time = time(NULL);
+            monitor_service(manage);
         }
     }
 
