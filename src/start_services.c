@@ -24,7 +24,6 @@ void start_services(SecWatchManager *manage){
             s->pid = pid;
             s->state = SERVICE_STARTING;
             s->restart_time = time(NULL);
-            monitor_service(manage);
         }
     }
 
