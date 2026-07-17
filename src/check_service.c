@@ -40,6 +40,7 @@ void monitor_service(SecWatchManager *manage){
     while (waitpid(-1, NULL, WNOHANG) > 0);
 
     check_time(manage);
+    bool system_changed = false;
 
     for (int i = 0; i < manage->total_services; i++) {
         ServiceConfig *s = &manage->services[i];
@@ -48,18 +49,22 @@ void monitor_service(SecWatchManager *manage){
         
         if (s->state != s->old_state){
             write_logging(s);
+            system_changed = true;
             s->old_state = s->state;
         }
         if (s->state == SERVICE_STOPPED){
             restart_service(s);
-            s->old_state = s->state;
+            system_changed = true;
         }
+    }
+    if (system_changed) {
+        write_pid_file(manage);
     }
 }
 
 void restart_service(ServiceConfig *s){    
 
-    if( s->restart_count >= MAX_LIMIT){
+    if(s->restart_count >= s->restart_limit){
         s->state = SERVICE_FAILED;
         return;
     }
@@ -99,7 +104,6 @@ void check_time(SecWatchManager *manage){
         if(uptime >= 60.0){
             s->state = SERVICE_RUNNING;
             s->restart_count = 0;
-            write_pid_file(s);
         }
     }
     }

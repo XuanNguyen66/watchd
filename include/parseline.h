@@ -14,7 +14,7 @@
 
 #define MAX_SERVICE 10
 #define MAX_ARGV 20
-#define MAX_LIMIT 0
+#define MAX_LIMIT 2
 
 typedef enum {
     SERVICE_STARTING,
@@ -51,6 +51,6 @@ int check_service(ServiceConfig *s);
 void monitor_service(SecWatchManager *manage);
 void write_logging(ServiceConfig *s);
 void check_time(SecWatchManager *manage);
-void write_pid_file(ServiceConfig *s);
+void write_pid_file(SecWatchManager *manage);
 
 #endif

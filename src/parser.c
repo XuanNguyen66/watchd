@@ -20,8 +20,8 @@ void parseline(char *line, SecWatchManager *manage){
 
         ServiceConfig *new_service = &manage->services[manage->total_services];
         memset(new_service, 0, sizeof(ServiceConfig));
-        new_service->state = SERVICE_STARTING;
-        new_service->old_state = SERVICE_STOPPED; 
+
+        new_service->restart_limit = MAX_LIMIT;
 
         manage->total_services++;
         return;
