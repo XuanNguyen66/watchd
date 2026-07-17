@@ -7,7 +7,24 @@ const char *state_name[] = {
     "FAILED"
 };
 
-void write_logging(SecWatchManager *manage){
+void write_pid_file(ServiceConfig *s){
+    if(access("./config", F_OK) != 0){
+        perror("Check dir");
+       return;
+    }
+
+    if(s->state == SERVICE_RUNNING){
+        int write_pid = open("./config/daemon_pid.txt", O_RDWR| O_CREAT | O_TRUNC, 0600);
+        if(write_pid == -1){
+            exit(EXIT_FAILURE);
+        }
+        dprintf(write_pid, "Service: [%s]\n", s->name);
+        dprintf(write_pid, "Pid: [%d]\n", s->pid);
+        close(write_pid);
+    } 
+}
+
+void write_logging(ServiceConfig *s){
     fprintf(stderr, "write_failed called\n");
     
     time_t now = time(NULL);
@@ -19,28 +36,28 @@ void write_logging(SecWatchManager *manage){
 
     if(access("./logs", F_OK) != 0){
         perror("Check dir");
-        exit(EXIT_FAILURE);
+        return;
     }
     
-    if(manage->state == SERVICE_RUNNING){
+    if(s->state == SERVICE_RUNNING){
         int service_runningfd = open("./logs/log_services_running.log", O_RDWR| O_CREAT | O_APPEND, 0600);
         if(service_runningfd == -1){
-            exit(EXIT_FAILURE);
+           return;
         }
-        dprintf(service_runningfd, "Service: [%s]\nTime: [%s]\n", manage->services->name, buf);
-        dprintf(service_runningfd, "Pid: [%d]\n", manage->services->pid);
-        dprintf(service_runningfd, "State: [%s]\n", state_name[manage->state]);
+        dprintf(service_runningfd, "Service: [%s]\nTime: [%s]\n", s->name, buf);
+        dprintf(service_runningfd, "Pid: [%d]\n", s->pid);
+        dprintf(service_runningfd, "State: [%s]\n", state_name[s->state]);
         close(service_runningfd);
     }
 
-    if(manage->state == SERVICE_FAILED){
+    if(s->state == SERVICE_FAILED){
         int service_failedfd = open("./logs/log_services_failed.log", O_RDWR| O_CREAT | O_APPEND, 0600);
         if(service_failedfd == -1){
-            exit(EXIT_FAILURE);
+            return;
         }
-        dprintf(service_failedfd, "Service: [%s]\nTime: [%s]\n", manage->services->name, buf);
-        dprintf(service_failedfd, "Pid: [%d]\n", manage->services->pid);
-        dprintf(service_failedfd, "State: [%s]\n", state_name[manage->state]);
+        dprintf(service_failedfd, "Service: [%s]\nTime: [%s]\n", s->name, buf);
+        dprintf(service_failedfd, "Pid: [%d]\n", s->pid);
+        dprintf(service_failedfd, "State: [%s]\n", state_name[s->state]);
         close(service_failedfd);
     }
 }

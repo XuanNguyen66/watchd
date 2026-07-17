@@ -1,95 +1,107 @@
 #include "parseline.h"
 
 
-void restart_service(SecWatchManager *manage);
+void restart_service(ServiceConfig *s);
 void check_time(SecWatchManager *manage);
 
-static bool is_process_alive(SecWatchManager *manage){
-    while (waitpid(-1, NULL, WNOHANG) > 0);
-
-    if (manage->services->pid > 0 && kill(manage->services->pid, 0) == 0)
+static bool is_process_alive(ServiceConfig *s){
+    
+    if (s->pid > 0 && kill(s->pid, 0) == 0)
     {
         return true;
     } 
     return false;
 }
 
-int check_service(SecWatchManager *manage){
+int check_service(ServiceConfig *s){
 
-    if (manage->state == SERVICE_FAILED){
-        write_logging(manage);        
+    if (s->state == SERVICE_FAILED){
+       return s->state;
     }
 
-    bool alive = is_process_alive(manage);
-    if(manage->state != SERVICE_STARTING){
+    bool alive = is_process_alive(s);
+    if(s->state != SERVICE_STARTING){
         if(alive){
-            manage->state = SERVICE_RUNNING;
-            write_logging(manage);
+            s->state = SERVICE_RUNNING;
         }
         else{
-            manage->state = SERVICE_STOPPED;
+            s->state = SERVICE_STOPPED;
         }
     } else{
         if (!alive) {
-            manage->state = SERVICE_STOPPED;
+            s->state = SERVICE_STOPPED;
         }
     }
-    return manage->state;
+    return s->state;
 }
 
 
 void monitor_service(SecWatchManager *manage){
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+
     check_time(manage);
-    int current_state = check_service(manage);
-    
-    if (current_state == SERVICE_STOPPED) {
-        restart_service(manage);
+
+    for (int i = 0; i < manage->total_services; i++) {
+        ServiceConfig *s = &manage->services[i];
+        
+        check_service(s);
+        
+        if (s->state != s->old_state){
+            write_logging(s);
+            s->old_state = s->state;
+        }
+        if (s->state == SERVICE_STOPPED){
+            restart_service(s);
+            s->old_state = s->state;
+        }
     }
 }
 
-void restart_service(SecWatchManager *manage){    
+void restart_service(ServiceConfig *s){    
 
-    if(manage->services->restart_count >= MAX_LIMIT){
-        manage->state = SERVICE_FAILED;
+    if( s->restart_count >= MAX_LIMIT){
+        s->state = SERVICE_FAILED;
         return;
     }
 
     pid_t new_pid = fork();
 
     if (new_pid < 0) {
-        printf("fork failed for service %s\n", manage->services->name);
+        printf("fork failed for service %s\n", s->name);
         return;
     }
 
     if (new_pid == 0)
     {
-       if (execvp(manage->services->argv[0], manage->services->argv) == -1) {
+       if (execvp(s->argv[0], s->argv) == -1) {
             perror("execvp failed");
             exit(1);
         }
     } else {
-        manage->services->pid = new_pid;
-        manage->state = SERVICE_STARTING;
+        s->pid = new_pid;
+        s->state = SERVICE_STARTING;
 
         // update time service restart
-        manage->services->restart_time = time(NULL);
-        manage->services->restart_count++;
-        printf("Restart lần thứ %d cho service %s\n", 
-               manage->services->restart_count, manage->services->name);
+        s->restart_time = time(NULL);
+        s->restart_count++;
     }
 }
 
 void check_time(SecWatchManager *manage){
+    int i;
     time_t now = time(NULL);
-    if(manage->state == SERVICE_STARTING){
-        double uptime = difftime( now, manage->services->restart_time);
+    for(i = 0; i < manage->total_services; i++){
+
+        ServiceConfig *s = &manage->services[i];
+
+        if(s->state == SERVICE_STARTING){
+        double uptime = difftime( now, s->restart_time);
         if(uptime >= 60.0){
-            manage->state = SERVICE_RUNNING;
-            manage->services->restart_count = 0;
-            printf("Service đã chạy ổn định\n");
-        } else{
-            printf("Service chưa chạy ổn định\n");
+            s->state = SERVICE_RUNNING;
+            s->restart_count = 0;
+            write_pid_file(s);
         }
+    }
     }
 
 }
