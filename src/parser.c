@@ -37,7 +37,6 @@ void parseline(char *line, SecWatchManager *manage){
         int idx = manage->total_services - 1;
 
         if (idx < 0) {
-            printf("[WARNING]: Key '%s' found before any [service] section. Ignored.\n", key);
             return;
         }
 
