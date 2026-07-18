@@ -4,46 +4,48 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include "parseline.h"
 #include "trim.h"
+
 
 static int init_core_suite() {return 0;}
 static int clean_core_suite() {return 0;}
 
-// add suites test
-void test_trim_function(void){
-    char str1[] = "   hello world   ";
-    trimline(str1);
-    CU_ASSERT_STRING_EQUAL(str1, "hello world");
+void test_parse_key_value(void) {
+    SecWatchManager manager;
+    memset(&manager, 0, sizeof(SecWatchManager));
+
+    char line1[] = "[service]";
+    parseline(line1, &manager);
+    CU_ASSERT_EQUAL(manager.total_services, 1);
+
+    char line2[] = "name=sleep_service";
+    parseline(line2, &manager);
     
-    char str2[] = "   hello";
-    trimline(str2);
-    CU_ASSERT_STRING_EQUAL(str2, "hello");
+    printf("\n[DEBUG NAME] Actual name saved is: '%s'\n", manager.services[0].name);
+    CU_ASSERT_STRING_EQUAL(manager.services[0].name, "sleep_service");
 
-    char str3[] = "world   ";
-    trimline(str3);
-    CU_ASSERT_STRING_EQUAL(str3, "world");
+    char line3[] = "cmd=/usr/bin/sleep 10";
+    parseline(line3, &manager);
 
-    char str4[] = "/usr/bin";
-    trimline(str4);
-    CU_ASSERT_STRING_EQUAL(str4, "/usr/bin");
-
-    char str5[] = "   ";
-    trimline(str5);
-    CU_ASSERT_STRING_EQUAL(str5, "");
-
+    printf("[DEBUG CMD] Actual cmd after strtok is: '%s'\n", manager.services[0].cmd);
+    
+    CU_ASSERT_STRING_EQUAL(manager.services[0].cmd, "/usr/bin/sleep");
+    CU_ASSERT_STRING_EQUAL(manager.services[0].argv[0], "/usr/bin/sleep");
+    CU_ASSERT_STRING_EQUAL(manager.services[0].argv[1], "10");
 }
-
 
 static bool addStringSuite() {
     // create and registry suite in Registry
-    CU_pSuite suite = CU_add_suite("string_utils", init_core_suite, clean_core_suite);
+    CU_pSuite suite = CU_add_suite("paser_utils", init_core_suite, clean_core_suite);
     if (!suite) {
         return false;
     }
 
     // registry test_case in Suite
-    return (CU_ADD_TEST(suite, test_trim_function) != NULL);
+    return (CU_ADD_TEST(suite, test_parse_key_value) != NULL);
 }
+
 
 int main(){
     // init regitry
