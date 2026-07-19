@@ -1,9 +1,10 @@
-name:
+name: ci
 on:
   push:
-    branchnes:
+    branches:
       - main
-    pull_request:
+  pull_request:
+    branches:
       - main
 
 jobs:
@@ -16,9 +17,14 @@ jobs:
       - name: set up gcc
         uses: egor-tensin/setup-gcc@v2
         with:
-        version: latest
-        platform: x64
-       
+          version: latest
+          platform: x64
+
+      - name: install Cunit
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcunit-dev
+
       - name: run tests
         run: make test
 
