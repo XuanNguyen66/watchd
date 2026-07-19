@@ -14,7 +14,7 @@ int main(){
 
     manage.total_services = 0;
 
-    FILE *fd = fopen("watch.conf", "r");
+    FILE *fd = fopen("./config/watch.conf", "r");
 
     char line[256];
 

@@ -26,8 +26,6 @@ $(TARGET): $(OBJFILES)
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-# $(BINDIR)/test_%: $(TESTDIR)/test_%.c  $(BINDIR)
-# 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 $(BINDIR)/test_%: $(TESTDIR)/test_%.c $(TEST_OBJS) | $(BINDIR)
 	$(CC) $(CFLAGS) -o $@ $< $(TEST_OBJS) $(LDFLAGS)
 
