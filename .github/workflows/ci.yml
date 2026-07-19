@@ -23,7 +23,7 @@ jobs:
       - name: install Cunit
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcunit-dev
+          sudo apt-get install -y libcunit1 libcunit1-doc libcunit1-dev
 
       - name: run tests
         run: make test
