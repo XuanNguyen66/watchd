@@ -14,7 +14,14 @@
 
 #define MAX_SERVICE 10
 #define MAX_ARGV 20
-#define MAX_LIMIT 1
+#define MAX_LIMIT 2
+
+typedef enum {
+    SERVICE_STARTING,
+    SERVICE_RUNNING,
+    SERVICE_STOPPED,
+    SERVICE_FAILED,
+} ServiceState;
 
 typedef struct {
     pid_t pid;
@@ -22,32 +29,28 @@ typedef struct {
     char cmd[256];
     char *argv[MAX_ARGV];
 
-    int restart_limit[MAX_LIMIT];
+    int restart_limit;
     unsigned int restart_count;
     time_t restart_time;
     time_t service_recover;
+
+    ServiceState state;
+    ServiceState old_state;
     
 } ServiceConfig;
 
-typedef enum {
-    SERVICE_STARTING = 0,
-    SERVICE_RUNNING = 1,
-    SERVICE_STOPPED = 2,
-    SERVICE_FAILED = 3,
-} ServiceState;
-
 typedef struct {
     ServiceConfig services[MAX_SERVICE];
-    ServiceState state;
     int total_services;
 } SecWatchManager;
 
 
 void parseline(char *line, SecWatchManager *manage);
 void start_services(SecWatchManager *manage);
-int check_service(SecWatchManager *manage);
+int check_service(ServiceConfig *s);
 void monitor_service(SecWatchManager *manage);
-void write_logging(SecWatchManager *manage);
+void write_logging(ServiceConfig *s);
 void check_time(SecWatchManager *manage);
+void write_pid_file(SecWatchManager *manage);
 
 #endif

@@ -1,0 +1,30 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      
+      - name: set up gcc
+        uses: egor-tensin/setup-gcc@v2
+        with:
+          version: latest
+          platform: x64
+
+      - name: install Cunit
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcunit1 libcunit1-doc libcunit1-dev
+
+      - name: run tests
+        run: make test
+

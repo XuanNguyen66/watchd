@@ -10,9 +10,11 @@ int main(){
     }
 
     SecWatchManager manage;
+    memset(&manage, 0, sizeof(SecWatchManager));
+
     manage.total_services = 0;
 
-    FILE *fd = fopen("watch.conf", "r");
+    FILE *fd = fopen("./config/watch.conf", "r");
 
     char line[256];
 
@@ -24,10 +26,10 @@ int main(){
        parseline(line, &manage);
     }
     fclose(fd);
+    
     start_services(&manage);
     
     while(1){
-        check_service(&manage);
         monitor_service(&manage);
         sleep(5);
     }
