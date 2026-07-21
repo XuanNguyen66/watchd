@@ -15,8 +15,6 @@ cleanup() {
             wait "$i" 2>/dev/null
         fi
     done
-<<<<<<< HEAD
-
     rm -f "$FILE_LOG_PID" -f "$FILE_LOG_RUNNING" -f "$FILE_LOG_FAILED"
 }
 trap cleanup EXIT
@@ -25,16 +23,6 @@ trap cleanup EXIT
 
 rm -f "$FILE_LOG_PID" -f "$FILE_LOG_RUNNING" -f "$FILE_LOG_FAILED"
 
-=======
-    rm -f "$FILE_LOG_PID" -f "$FILE_LOG_RUNNING" -f "$FILE_LOG_FAILED"
-}
-trap cleanup EXIT
-
-"$BIN" &
-
-rm -f "$FILE_LOG_PID" -f "$FILE_LOG_RUNNING" -f "$FILE_LOG_FAILED"
-
->>>>>>> main
 sleep 70
 
 if [[ -f "$FILE_LOG_PID" && ( -f "$FILE_LOG_RUNNING" || -f "$FILE_LOG_FAILED" ) ]]; then
